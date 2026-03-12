@@ -86,11 +86,6 @@ Ai-posture-coach_capstone_project/
 └─ posture_coach_step4_hud_tts_log_success_anim_oakd.py
 ```
 
-> 현재 로컬 파일 중 `posture_coach_step4_hud_tts_log_success_anim.py.py` 는 GitHub에 업로드할 때
-> `posture_coach_step4_hud_tts_log_success_anim.py` 로 이름을 정리하는 것을 권장합니다.
-
----
-
 ## 5. Development Flow
 
 이 프로젝트는 다음과 같은 순서로 발전했습니다.
