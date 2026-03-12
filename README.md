@@ -1,122 +1,299 @@
-# 🏋️‍♂️ AI Posture Coach (실시간 자세 교정 AI 코치)
+# AI Posture Coach Capstone Project
 
-`AI Posture Coach`는 웹캠을 통해 사용자의 자세를 실시간으로 분석하고, 나쁜 자세일 경우 즉각적인 피드백을 제공하여 바른 자세를 유지하도록 돕는 데스크톱 애플리케이션입니다. 이 프로젝트는 장시간 앉아서 생활하는 현대인들의 고질적인 문제인 거북목과 굽은 허리를 예방하는 것을 목표로 합니다.
+실시간 영상 기반 자세 교정 캡스톤 프로젝트입니다.
+웹캠 또는 OAK-D Pro 입력을 받아 사용자의 자세를 분석하고, **거북목(CVA)** 및 **굽은 허리(Torso-Thigh angle)** 상태를 감지하여 **시각 경고**, **TTS 음성 안내**, **비프음 알림**, **HUD 표시**, **세션 로그 저장**, **성공 복귀 애니메이션**을 제공합니다.
 
+---
 
-## ✨ 주요 기능 (Features)
+## 1. Project Overview
 
-  * **실시간 자세 분석**: 웹캠 영상 위에서 사용자의 신체 주요 부위를 실시간으로 추적합니다.
-  * **2가지 핵심 자세 감지**: 거북목(Forward Head Posture)과 굽은 허리(Slumped Posture)를 중점적으로 탐지합니다. 
-  * **즉각적인 시각적 피드백**: 자세가 올바를 때는 화면 테두리가 **녹색**으로, 나빠졌을 때는 **빨간색**으로 변하여 사용자에게 즉각적인 신호를 줍니다.
-  * **알림 기능 (구현 예정)**: 나쁜 자세가 일정 시간 이상 지속되면 소리나 텍스트 팝업으로 사용자에게 경고합니다.
+장시간 앉아서 공부하거나 작업하는 사용자는 무의식적으로 거북목이나 굽은 자세를 유지하기 쉽습니다.
+이 프로젝트는 실시간 카메라 영상을 바탕으로 상체 자세를 추정하고, 사용자의 목과 허리 상태를 지속적으로 분석하여 잘못된 자세가 일정 시간 이상 유지될 경우 즉각적인 피드백을 제공하는 것을 목표로 합니다.
 
-## 🤔 어떻게 작동하나요? (How It Works)
+핵심적으로 다음 두 가지 지표를 사용합니다.
 
-이 프로그램은 `MediaPipe Pose` 라이브러리를 사용하여 웹캠 영상에서 사용자의 주요 신체 부위(귀, 어깨, 고관절, 무릎)를 식별합니다. 식별된 좌표를 바탕으로 두 가지 핵심 각도를 계산하여 자세를 판단합니다.
+* **Neck Angle (CVA, Craniovertebral Angle)**
 
-1.  **거북목 (Forward Head Posture) 판단**
-      * **기준**: '귀-어깨' 선과 '어깨-고관절' 선 사이의 각도(CVA)를 측정합니다.
-      * **경고**: 이 각도가 `50도 미만`일 경우 거북목으로 판단합니다.
-2.  **굽은 허리 (Slumped Posture) 판단**
-      * **기준**: '어깨-고관절-무릎' 사이의 각도를 측정합니다. 
-      * **경고**: 이 각도가 `90도 미만`일 경우 굽은 허리로 판단합니다. 
+  * 어깨와 귀 좌표를 기반으로 거북목 여부를 판단
+* **Back Angle (Torso-Thigh Angle)**
 
-## 🛠️ 기술 스택 (Tech Stack)
+  * 어깨, 엉덩이, 무릎 좌표를 기반으로 상체 숙임/허리 굽음 여부를 판단
 
-  * **Python**: 메인 프로그래밍 언어 
-  * **OpenCV**: 웹캠 영상 처리 및 화면 출력 
-  * **MediaPipe**: 구글의 오픈소스 ML 솔루션으로, 신체 랜드마크를 추정하는 데 사용 
-  * **(Optional) Tkinter**: 시작/종료 버튼 등 간단한 GUI 구현
+이 프로젝트는 초기 프로토타입에서 시작하여, 단계적으로 기능을 확장하며 완성도를 높인 형태의 캡스톤 프로젝트입니다.
 
-## 📂 프로젝트 구조 (Project Structure)
-```
-Ai-posture-coach/
-├── src/                  # 👈 메인 소스 코드가 있는 폴더
-│   └── main.py
-├── data/                 # 👈 (선택 사항) 데이터셋, CSV 파일 등
-├── docs/                 # 👈 (선택 사항) 프로젝트 관련 문서
-├── .gitignore            # 👈 Git이 추적하지 않을 파일 목록
-├── LICENSE               # 👈 프로젝트 라이선스
-├── README.md             # 👈 프로젝트 설명서 (현재 파일)
-└── requirements.txt      # 👈 필요한 라이브러리 목록     
-```
-  
-## 🚀 시작하기 (Getting Started)
+---
 
-### 사전 요구 사항 (Prerequisites)
+## 2. Main Features
 
-  * Python 3.7 이상
-  * 웹캠
+### Core Features
 
-### 설치 및 실행 (Installation & Usage)
+* 실시간 카메라 입력 처리
+* MediaPipe Pose 기반 인체 랜드마크 추출
+* Neck(CVA), Back(Torso-Thigh) 각도 계산
+* 최근 프레임 평균 기반 스무딩 처리
+* 자세 상태 분류
 
-1.  **저장소 복제 (Clone)**
+  * `GOOD`
+  * `NECK WARN!`
+  * `SLUMP WARN!`
+  * `NO PERSON`
 
-    ```bash
-    git clone https://github.com/ParkEunSeongKR/Ai-posture-coach_capstone_project
-    cd ai-posture-coach
-    ```
+### Alert Features
 
-2.  **가상 환경 생성 및 활성화**
+* 나쁜 자세가 일정 시간 이상 지속될 때만 경고 발생
+* 화면 중앙 또는 HUD 경고 패널 표시
+* TTS 음성 안내
+* 비프음 알림
+* 자세 에피소드 단위 경고 제어
 
-    ```bash
-    # Windows
-    python -m venv venv
-    venv\Scripts\activate
+### Extended Features
 
-    # macOS / Linux
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
+* 카메라 창과 HUD 창 분리
+* 세션 시간 / 좋은 자세 시간 / 나쁜 자세 시간 / 사람 미검출 시간 표시
+* 경고 횟수 집계
+* CSV 로그 저장
+* 세션 종료 후 요약 화면 출력
+* 좋은 자세 복귀 성공 애니메이션 표시
+* OAK-D Pro 카메라 입력 지원
 
-3.  **필요 라이브러리 설치**
+---
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+## 3. Tech Stack
 
-4.  **프로그램 실행**
+* **Python**
+* **OpenCV**
+* **MediaPipe Pose**
+* **NumPy**
+* **pyttsx3** *(optional, TTS)*
+* **winsound** *(optional, Windows beep sound)*
+* **DepthAI** *(optional, OAK-D Pro support)*
 
-    ```bash
-    python src/main.py
-    ```
+---
 
------
+## 4. Project Structure
 
-**`requirements.txt` 파일 내용:**
-
-```txt
-opencv-python
-mediapipe
+```text
+Ai-posture-coach_capstone_project/
+├─ README.md
+├─ requirements.txt
+├─ .gitignore
+├─ posture_coach_step1.py
+├─ posture_coach_step2_mvp.py
+├─ posture_coach_step3_tts_episode.py
+├─ posture_coach_step4_hud_tts_log_version1.py
+├─ posture_coach_step4_hud_tts_log_version2.py
+├─ posture_coach_step4_hud_tts_log_success_anim.py
+└─ posture_coach_step4_hud_tts_log_success_anim_oakd.py
 ```
 
------
+> 현재 로컬 파일 중 `posture_coach_step4_hud_tts_log_success_anim.py.py` 는 GitHub에 업로드할 때
+> `posture_coach_step4_hud_tts_log_success_anim.py` 로 이름을 정리하는 것을 권장합니다.
 
-## 🗺️ 프로젝트 로드맵 (Roadmap)
+---
 
-이 프로젝트는 효율적인 단독 개발을 위해 단계별 실행 계획에 따라 진행되었습니다. [cite: 2, 20]
+## 5. Development Flow
 
-  * [✔️] **1단계: 핵심 기술 검증**
+이 프로젝트는 다음과 같은 순서로 발전했습니다.
 
-      * [✔️] 웹캠 영상 위에 MediaPipe 랜드마크 표시
-      * [✔️] 2가지 핵심 자세(거북목, 굽은 허리) 각도 계산 및 출력 
+1. **기본 자세 각도 측정 프로토타입 구현**
+2. **MVP 수준의 자세 상태 분류 추가**
+3. **TTS / 비프음 / 경고 에피소드 처리 추가**
+4. **세션 타이머 / 로그 저장 / 요약 화면 추가**
+5. **카메라 창과 HUD 창 분리**
+6. **좋은 자세 복귀 시 성공 애니메이션 추가**
+7. **OAK-D Pro 입력 지원**
 
-  * [✔️] **2단계: 최소 기능 제품(MVP) 완성** 
+즉, 단순한 자세 측정 도구에서 시작하여, 사용자 피드백과 기록 기능을 갖춘 실시간 자세 코칭 시스템으로 발전한 프로젝트입니다.
 
-      * [✔️] 각도에 따른 '좋은/나쁜' 자세 판별 로직 구현 
-      * [✔️] 자세 상태에 따른 화면 테두리 색상 변경 (시각적 피드백) 
+---
 
-  * [🚧] **3단계: 기능 확장 및 고도화** 
+## 6. File Description
 
-      * [🚧] 나쁜 자세 지속 시 소리/텍스트 알림 기능 
-      * [ ] 시작/종료 버튼을 포함한 기본 UI 제작 
-      * [ ] 캘리브레이션(자세 교정) 기능 추가 
+### `posture_coach_step1.py`
 
-  * [ ] **4단계: 최종 테스트 및 문서화** 
+초기 프로토타입 버전입니다.
 
-      * [ ] 다양한 환경에서의 테스트 및 버그 수정 
-      * [ ] 최종 보고서 및 발표 자료 작성 
+* 웹캠 입력 + MediaPipe Pose 기반 자세 추정
+* `calculate_angle()` 함수로 각도 계산
+* 목 각도와 허리/상체 각도 표시
+* 최근 프레임 평균을 이용한 스무딩 처리
+* 기초적인 실시간 자세 측정 기능 구현
 
-## 📄 라이선스 (License)
+### `posture_coach_step2_mvp.py`
 
-이 프로젝트는 MIT 라이선스를 따릅니다. 자세한 내용은 `LICENSE` 파일을 참고하세요.
+MVP 버전입니다.
+
+* `GOOD`, `NECK WARN!`, `SLUMP WARN!`, `NO PERSON` 상태 분류
+* 임계값 기반 자세 판별 로직 적용
+* 화면 하단 상태 텍스트 표시
+* 상태에 따른 테두리/텍스트 색상 변경
+* 사용자 피드백 구조 정리
+
+### `posture_coach_step3_tts_episode.py`
+
+경고 시스템이 추가된 버전입니다.
+
+* 나쁜 자세 지속 시간 추적
+* 일정 시간 이상 나쁜 자세가 유지될 때만 경고 발생
+* TTS 음성 안내 추가
+* 비프음 알림 추가
+* 경고 에피소드 단위 제어
+* 화면 중앙 경고 박스 표시
+
+### `posture_coach_step4_hud_tts_log_version1.py`
+
+기능 확장 1차 버전입니다.
+
+* 세션 시간 추적
+* GOOD / BAD / NO PERSON 시간 누적
+* `neck_warn_count`, `slump_warn_count` 집계
+* `posture_log.csv` 로그 저장
+* 세션 종료 후 요약 화면 출력
+
+### `posture_coach_step4_hud_tts_log_version2.py`
+
+UI 개선 버전입니다.
+
+* 카메라 창과 HUD 창 분리
+* HUD에 각도, 경고 지속 시간, 세션 시간, GOOD/BAD/NO PERSON 시간 표시
+* 경고 횟수 표시
+* HUD 내부 경고 패널 추가
+* 전체 사용자 인터페이스 정리
+
+### `posture_coach_step4_hud_tts_log_success_anim.py`
+
+복귀 성공 피드백이 추가된 버전입니다.
+
+* 나쁜 자세 이후 좋은 자세를 안정적으로 유지하면 성공 애니메이션 표시
+* 초록 체크, 원형 효과, `GOOD!` 텍스트 등 긍정적 피드백 제공
+* HUD 기반 피드백 강화
+
+### `posture_coach_step4_hud_tts_log_success_anim_oakd.py`
+
+OAK-D Pro 지원 버전입니다.
+
+* DepthAI 기반 OAK-D Pro 입력 처리
+* 기존 HUD / 로그 / 성공 애니메이션 기능 유지
+* 일반 웹캠 대신 OAK-D Pro 장비 사용 가능
+
+---
+
+## 7. Posture Decision Logic
+
+### Neck Posture
+
+* **Neck(CVA) < 50°** → 거북목 경고
+* **Neck(CVA) >= 50°** → 정상 범위
+
+### Back Posture
+
+* **Torso-Thigh Angle < 90°** → 굽은 자세 경고
+* **Torso-Thigh Angle >= 90°** → 정상 범위
+
+### Alert Condition
+
+* 나쁜 자세가 **3초 이상** 지속될 경우 경고 발생
+* 자세가 다시 정상으로 돌아오면 경고 상태를 초기화
+* 일부 버전에서는 좋은 자세 복귀 후 성공 애니메이션 표시
+
+---
+
+## 8. Installation
+
+### Basic Installation
+
+```bash
+pip install opencv-python mediapipe numpy pyttsx3
+```
+
+### For OAK-D Pro Support
+
+```bash
+pip install depthai
+```
+
+---
+
+## 9. How to Run
+
+### Run basic versions
+
+```bash
+python posture_coach_step1.py
+python posture_coach_step2_mvp.py
+python posture_coach_step3_tts_episode.py
+python posture_coach_step4_hud_tts_log_version1.py
+python posture_coach_step4_hud_tts_log_version2.py
+python posture_coach_step4_hud_tts_log_success_anim.py
+```
+
+### Run OAK-D Pro version
+
+```bash
+python posture_coach_step4_hud_tts_log_success_anim_oakd.py
+```
+
+---
+
+## 10. Log File
+
+Step 4 이상 버전에서는 세션 종료 후 `posture_log.csv` 파일이 생성될 수 있으며, 일반적으로 다음과 같은 정보가 저장됩니다.
+
+* 실행 시각
+* 총 세션 시간
+* 좋은 자세 시간
+* 나쁜 자세 시간
+* 사람 미검출 시간
+* 좋은 자세 비율
+* 목 경고 횟수
+* 허리 경고 횟수
+
+이를 통해 단순 실시간 피드백뿐 아니라, 세션 단위의 자세 관리 기록도 확인할 수 있습니다.
+
+---
+
+## 11. Expected Applications
+
+* 장시간 공부하는 대학생 자세 관리
+* 장시간 컴퓨터 작업 환경에서의 자세 교정
+* 개인용 자세 모니터링 시스템
+* 실시간 컴퓨터 비전 기반 헬스케어/웰니스 프로젝트
+* OAK-D Pro 기반 스마트 자세 코칭 시스템 확장
+
+---
+
+## 12. Limitations
+
+* MediaPipe landmark 추정 정확도는 카메라 각도와 조명 환경에 영향을 받음
+* 측면 자세 인식 품질은 사용자 위치와 회전 정도에 따라 달라질 수 있음
+* 단일 카메라 기반이므로 깊이 정보가 제한적일 수 있음
+* 현재 코드는 단계별 실험/확장 구조라 모듈화가 충분하지 않음
+
+---
+
+## 13. Future Improvements
+
+* 코드 모듈화 및 리팩토링
+* `config.py` 등 설정값 분리
+* GUI 앱 형태로 패키징
+* 로그 분석 및 통계 시각화 대시보드 추가
+* 사용자별 맞춤 피드백 기능 추가
+* 자세 정확도 검증 실험 및 평가 지표 정리
+* 다중 센서 또는 깊이 정보 기반 자세 분석 확장
+
+---
+
+## 14. Conclusion
+
+AI Posture Coach는 단순한 자세 측정에서 출발해, 실시간 자세 상태 판단, 경고 시스템, 로그 저장, HUD, 성공 피드백, 하드웨어 확장까지 단계적으로 발전한 캡스톤 프로젝트입니다.
+
+특히 이 프로젝트의 강점은 **단계별 기능 확장 과정이 명확하게 남아 있다는 점**입니다.
+따라서 GitHub에는 단순 결과물만 올리기보다, **step 기반 개발 흐름 자체를 프로젝트의 핵심 스토리로 정리하는 방식**이 가장 적절합니다.
+
+---
+
+## 15. Author
+
+* **박은성**
+* 제주한라대학교 인공지능학과
+* Capstone Project: **AI Posture Coach**
